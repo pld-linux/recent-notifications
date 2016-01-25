@@ -7,9 +7,10 @@ Group:		X11/Applications
 Source0:	https://launchpad.net/recent-notifications/gnome3/%{version}/+download/%{name}-%{version}.tar.gz
 # Source0-md5:	a51daff631aa9ea71a0f5e47195991d3
 URL:		https://launchpad.net/recent-notifications
-BuildRequires:	pkgconfig(libpanelapplet-4.0) >= 3.1.91
+BuildRequires:	pkgconfig(libpanel-applet) >= 3.1.91
 BuildRequires:	rpm-pythonprov
 BuildRequires:	rpmbuild(macros) >= 1.713
+BuildRequires:	vala >= 2:0.18
 Requires:	python-dbus
 Requires:	python-gnomeapplet
 Requires:	python-gtk2
@@ -23,8 +24,16 @@ sent with libnotify to a notification daemon, such as notify-osd.
 %prep
 %setup -q
 
+%{__sed} -i -e '/LIBPANELAPPLET_NAME/ s/libpanelapplet-4.0/libpanel-applet/' configure.ac
+%{__sed} -i -e '/AM_INIT_AUTOMAKE/ s/-Werror//' configure.ac
+
 %build
+%{__aclocal}
+%{__autoconf}
+%{__autoheader}
+%{__automake}
 %configure \
+	--disable-silent-rules \
 	--libexecdir=%{_libdir}/%{name}
 %{__make}
 
